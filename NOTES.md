@@ -267,3 +267,70 @@ git add . && git commit -m
 
 
 
+# Chapter 02-01
+
+basic routing
+
+## Send a response for the root route
+
+```javascript
+app.get('/', function(req, res) {
+  res.send(`
+      <h1>Welcome</h1>
+      <p>Roux Academy Meetups put together artists from all walks of life</p>
+  `);
+});
+```
+
+
+
+## Send a response for the "speakers" route
+
+```javascript
+app.get('/speakers', function(req, res) {
+  var info = '';
+  dataFile.speakers.forEach(function(item) {
+    info += `
+    <li>
+      <h2>${item.name}</h2>
+      <p>${item.summary}</p>
+    </li>
+    `;
+  });
+  res.send(`
+      <h1>Roux Academy Meetups</h1>
+      ${info}
+  `);
+});
+```
+
+
+
+## Send a response for an individual speaker route based on speaker's "id"
+
+```javascript
+app.get('/speakers/:speakerid', function(req, res) {
+
+  var speaker = dataFile.speakers[req.params.speakerid];
+  res.send(`
+      <h1>${speaker.title}</h1>
+      <h2>with ${speaker.name}</h2>
+      <p>${speaker.summary}</p>
+  `);
+});
+```
+
+
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+
+
+# Chapter 02-02
+
