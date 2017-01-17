@@ -334,3 +334,177 @@ git add . && git commit -m
 
 # Chapter 02-02
 
+modularizing routes
+
+
+
+## Add a routes directory
+
+```javascript
+mkdir routes
+```
+
+
+
+## Add separate files to handle each route
+
+```bash
+touch routes/index.js && touch routes/speakers.js
+```
+
+
+
+## Set a variable to reference the datafile
+
+@app.js
+
+```javascript
+app.set('appData', dataFile);
+```
+
+
+
+## Include newly created route handling files
+
+@ app.js
+
+```javascript
+app.use(require('./routes/index'));
+app.use(require('./routes/speakers'));
+```
+
+
+
+## Require Express Router 
+
+@ the top of index.js and speaker.js
+
+```javascript
+var express = require('express');
+var router = express.Router();
+```
+
+
+
+## Move root route handling to index.js
+
+```javascript
+app.get('/', function(req, res) {
+  res.send(`
+      <h1>Welcome</h1>
+      <p>Roux Academy Meetups put together artists from all walks of life</p>
+  `);
+});
+```
+
+
+
+## Move speaker route handling to speaker.js
+
+```javascript
+app.get('/speakers', function(req, res) {
+  var info = '';
+  dataFile.speakers.forEach(function(item) {
+    info += `
+    <li>
+      <h2>${item.name}</h2>
+      <p>${item.summary}</p>
+    </li>
+    `;
+  });
+  res.send(`
+      <h1>Roux Academy Meetups</h1>
+      ${info}
+  `);
+});
+
+app.get('/speakers/:speakerid', function(req, res) {
+  var speaker = dataFile.speakers[req.params.speakerid];
+  res.send(`
+      <h1>${speaker.title}</h1>
+      <h2>with ${speaker.name}</h2>
+      <p>${speaker.summary}</p>
+  `);
+});
+```
+
+
+
+## Routes should now be methods called on the router
+
+replace app.get() with router.get() for all three routes...
+
+## Get data file into speakers.js
+
+speakers.js uses the datafile.  Use the var created in app.js to import the data into speakers.js routing functions
+
+```javascript
+app.get('/speakers', function(req, res) {
+  var info = '';
+  var dataFile = req.app.get('appData'); //<-- ADD
+  dataFile.speakers.forEach(function(item) {
+    info += `
+    <li>
+      <h2>${item.name}</h2>
+      <p>${item.summary}</p>
+    </li>
+    `;
+  });
+  res.send(`
+      <h1>Roux Academy Meetups</h1>
+      ${info}
+  `);
+});
+
+app.get('/speakers/:speakerid', function(req, res) {
+  var speaker = dataFile.speakers[req.params.speakerid]; //<-- ADD
+  var dataFile = req.app.get('appData');
+  res.send(`
+      <h1>${speaker.title}</h1>
+      <h2>with ${speaker.name}</h2>
+      <p>${speaker.summary}</p>
+  `);
+});
+```
+
+
+
+## Export router from index.js and speakers.js
+
+```javascript
+module.exports = router;
+```
+
+
+
+## app.js looks like this
+
+```javascript
+var express = require('express');
+var app = express();
+var dataFile = require('./data/data.json');
+
+app.set('port', process.env.PORT || 3000 );
+app.set('appData', dataFile);
+
+var server = app.listen(app.get('port'), function() {
+  console.log('Listening on port ' + app.get('port'));
+});
+```
+
+
+
+## Check app functions
+
+```bash
+node app.js
+```
+
+
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
