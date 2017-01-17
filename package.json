@@ -1,0 +1,15 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "My build of the course 'Building a Website with Node & ExpressJS course on Lynda.com'",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "smerth",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
