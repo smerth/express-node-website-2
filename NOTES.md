@@ -919,3 +919,122 @@ index.ejs template should be rendering
 git add . && git commit -m
 ```
 
+
+
+# Chapter 03-02 
+
+Using data with views
+
+
+
+## Data in Views
+
+You can pass data as a variable to routes in a rendered response...
+
+It will become a local variable that you can use inside your templates.
+
+```javascript
+res.render('index', { data })
+```
+
+That data will only be available to that route.
+
+
+
+Or, you can set a global variable for data, which will make data available as a local variable within all views throughout the app.
+
+```javascript
+app.locals.??? = {}
+```
+
+
+
+To access data inside templates you sue this notation
+
+```ejs
+<%= data %>
+```
+
+
+
+## Passing data through the route
+
+```javascript
+  res.render('index', {
+    pageTitle: 'Home',
+    pageID: 'home'
+  });
+```
+
+
+
+## Use these variables in the template
+
+@ index.ejs
+
+```ejs
+<title>Roux Meetups--<%= pageTitle %></title>
+```
+
+and 
+
+@ index.ejs
+
+```ejs
+<body id="<%= pageID %>">
+```
+
+
+
+## Make site title available globally
+
+Site title is used on every route so its a good candidate for setting a global variable.
+
+@ app.js
+
+```javascript
+app.locals.siteTitle = 'Roux Meetups';
+```
+
+
+
+and use it in the template
+
+```ejs
+<title><%= siteTitle %>--<%= pageTitle %></title>
+```
+
+
+
+
+
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+index.ejs template should be rendering
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+
+
+
+
+
+
+# Chapter 03-03
+
+
+
+Using Conditionals and Loops
+
