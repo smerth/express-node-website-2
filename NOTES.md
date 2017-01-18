@@ -427,11 +427,13 @@ replace app.get() with router.get() for all three routes...
 
 You can set app variables using ```app.set()``` as was done for the data.json file in the express server ```app.set('appData', dataFile);```
 
-That variable can then be imported into other file like each of the routing files using ```
+That variable can then be imported into other file like each of the routing files using ```app.get()```.
+
+We get the variable through the request object ```req.app.get('appData');```
+
+Variables set with ```app.set()``` are available throughout the app and can be fetched throughout the app with ```app.get()```
 
 
-
-speakers.js uses the datafile.  Use the var created in app.js to import the data into speakers.js routing functions
 
 ```javascript
 app.get('/speakers', function(req, res) {
@@ -521,6 +523,118 @@ git add . && git commit -m
 # Chapter 02-03
 
 Creating a Public Folder
+
+## Add folders
+
+```bash
+mkdir public && mkdir public/css && mkdir public/js && mkdir public/images
+```
+
+
+
+## Import Image and CSS assets
+
+Best to grab these from what ever source you use as they vary from project to project.
+
+
+
+## Serve the public assets
+
+Static is an example of middleware.
+
+```express.static('')``` allows us to make a set of folder contents available to any of the app's routes.
+
+```javascript
+app.use(express.static('public'));
+```
+
+
+
+## Use some of these assets in our root route response
+
+@ index.js
+
+```javascript
+router.get('/', function(req, res) {
+  res.send(`
+      <link rel="stylesheet" type="text/css" href="css/style.css">
+      <h1>Welcome</h1>
+      <img src="/images/misc/background.jpg" alt="background" style="height: 300px;">
+      <p>Roux Academy Meetups put together artists from all walks of life</p>
+  `);
+});
+```
+
+
+
+## Use some of these assets in our speaker/s route response
+
+@ speakers.js
+
+```javascript
+router.get('/speakers', function(req, res) {
+  var info = '';
+  var dataFile = req.app.get('appData');
+  dataFile.speakers.forEach(function(item) {
+    info += `
+    <li>
+      <h2>${item.name}</h2>
+      <img src="/images/speakers/${item.shortname}_tn.jpg" alt="speaker">
+      <p>${item.summary}</p>
+    </li>
+    `;
+  });
+  res.send(`
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+      <h1>Roux Academy Meetups</h1>
+      ${info}
+  `);
+});
+
+router.get('/speakers/:speakerid', function(req, res) {
+  var dataFile = req.app.get('appData');
+  var speaker = dataFile.speakers[req.params.speakerid];
+  res.send(`
+      <link rel="stylesheet" type="text/css" href="/css/style.css">
+      <h1>${speaker.title}</h1>
+      <h2>with ${speaker.name}</h2>
+      <img src="/images/speakers/${speaker.shortname}_tn.jpg" alt="speaker">
+      <p>${speaker.summary}</p>
+  `);
+});
+```
+
+Looping through the json data to make up image src paths relies on structuring the the json with a "shortname" item.
+
+```html
+<img src="/images/speakers/${item.shortname}_tn.jpg" alt="speaker">
+```
+
+
+
+For the ```/speakers/:speakerid``` route make sure you use the absolute path to assets since you traversing the folder hierarchy. Eg: ```href="/css/style.css"```
+
+
+
+## Check app functions
+
+```bash
+node app.js
+```
+
+
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+# Chapter 02-04
+
+Automating Workflow
 
 
 
