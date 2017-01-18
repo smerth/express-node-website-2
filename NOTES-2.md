@@ -176,7 +176,7 @@ speakers.forEach(function(item)
 npm start
 ```
 
-Speaker list on speakers route is working
+Speaker list on speakers route is working 
 
 ## Commit changes
 
@@ -185,4 +185,114 @@ git add . && git commit -m
 ```
 
 
+
+# Chapter 03-05
+
+Building flexible views
+
+
+
+Having made the speakers list partial it would be nice to use it else where.  But if I include it on index.ejs
+
+```ejs
+<!DOCTYPE html>
+<html>
+  <head><% include partials/template/head.ejs %></head>
+  <body id="<%= pageID %>">
+    <% include partials/template/header.ejs %>
+    <% include partials/content/speakerslist.ejs %>
+```
+
+it breaks because the speakers variable it require is being fed to it through the speakers route definition in speakers.js, it not available on the index.js route.
+
+
+
+This can be fixed by adding the variable the index.js root route definintion
+
+```javascript
+var express = require('express');
+var router = express.Router();
+
+router.get('/', function(req, res) {
+  var data = req.app.get('appData');
+  var pagePhotos = [];
+  var pageSpeakers = data.speakers; //<--- ADD
+
+  data.speakers.forEach(function(item) {
+    pagePhotos = pagePhotos.concat(item.artwork);
+  });
+
+  res.render('index', {
+    pageTitle: 'Home',
+    artwork: pagePhotos,
+    speakers: pageSpeakers, //<-- ADD
+    pageID: 'home'
+  });
+
+});
+
+module.exports = router;
+```
+
+Now the speakers list partial displays on the homepage.  However the formatting in the same as on the speakers page and doesn't fit on the homepage.  The style is dictated by bootstrap so we can go into the speaker list partial and conditionally change the bootstrap markup based on the active route.
+
+## Add conditional Bootstrap Markup to a partial
+
+Each route adds pageID as a variable to that page so we can use that and javascript to conditionally write Bootstrap classes
+
+```ejs
+<article class="speakerslist <% if (pageID == 'home') { %>jumbotron hidden-xs<% } %>">
+  <div class="container">
+    <div class="row">
+        <% speakers.forEach(function(item) { %>
+        <div class="<% if (pageID == 'home') { %>col-sm-4 text-center<% } else { %>col-sm-8 <% } %>">
+          <h3 class="speakerslist-title"><%= item.title %></h3>
+          <h5 class="speakerslist-name">with <a href="/speakers/<%= item.shortname %>"><%= item.name %></a></h5>
+          <p class="speakerslist-info">
+            <a href="/speakers/<%= item.shortname %>">
+
+              <% if (pageID == 'home') { %>
+                <img class="speakerslist-img img-circle" src="/images/speakers/<%= item.shortname %>_tn.jpg" alt="Photo of <%= item.name %>"></a>
+              <% } %>
+
+              <% if (pageID == 'speakers') { %>
+                <img class="speakerslist-img img-circle pull-left" src="/images/speakers/<%= item.shortname %>_tn.jpg" alt="Photo of <%= item.name %>"></a>
+              <% } %>
+            </a>
+
+            <% if (pageID !== 'home') { %>
+              <%= item.summary %>
+            <% } %>
+          </p>
+        </div>
+        <%  }); %>
+    </div><!-- row -->
+  </div><!-- container -->
+</article>
+
+```
+
+
+
+At this point in the tutorial you may exlaim, "Super Groovy!" and light up a spliff.  Or, maybe have a camomile tea and a nap.  Express.js is completely agnostic as to your choice.
+
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+Speaker list on homepage working with different Bootstrap classes and hence different CSS.
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+# Chapter 03-06
 
