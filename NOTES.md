@@ -1038,3 +1038,117 @@ git add . && git commit -m
 
 Using Conditionals and Loops
 
+
+
+## Conditionally include javascript in a template
+
+```ejs
+<% if(typeof artwork !== "undefined") { %>
+  <script src="/js/pixgrid.js"></script>
+<% } %>
+```
+
+If the variable "artwork" does not exit then...
+
+## Create the variable used to evaluatet the if statement
+
+@ index.js
+
+```javascript
+router.get('/', function(req, res) {
+  var data = req.app.get('appData');
+  var pagePhotos = [];
+
+  data.speakers.forEach(function(item) {
+    pagePhotos = pagePhotos.concat(item.artwork);
+  });
+
+  res.render('index', {
+    pageTitle: 'Home',
+    artwork: pagePhotos,
+    pageID: 'home'
+  });
+
+});
+```
+
+
+
+Working backward.  We want the variable artwork to be available to the template so we add it to the response object using the  render() method.
+
+Each artist's node in the data contains an array called artwork with a list of image URLs to their  artwork.
+
+So how to iterate through each speaker and append their images to an existing array?
+
+Just grab the data. ```var data = req.app.get('appData');```
+
+Create the empty array ```var pagePhotos = [];```.
+
+ Iterate through each speaker, and concat their artwork array to the pagePhoto array. 
+
+```javascript
+data.speakers.forEach(function(item) {
+    pagePhotos = pagePhotos.concat(item.artwork);
+  });
+```
+
+
+
+## Print image grid to the page
+
+@ index.ejs
+
+```ejs
+<article class="sidebar">
+  <h1 class="sidebar-title">Artwork on display</h1>
+  <p class="sidebar-body">While you attend the conference, head over to our gallery where you can check out some of the work from our speakers.</p>
+  <div class="pixgrid clearfix">
+    <% if (artwork.length > 0) { %>
+    <% for (i=0; i< artwork.length; i++) { %>
+        <img src="/images/artwork/<%= artwork[i] %>" alt="Artwork <%= i %>">
+    <% } %>
+    <% } %>
+  </div>
+</article>
+```
+
+
+
+Here we use an if statement and a for loop to build up the html for the pixgrid.js to work with.
+
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+All of the images from all the speakers should display in the grid
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
