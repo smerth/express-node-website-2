@@ -296,3 +296,126 @@ git add . && git commit -m
 
 # Chapter 03-06
 
+Working with getData() in views
+
+It would be great to include a list of speakers in the drop down menu
+
+@ app.js
+
+create a new variable with list of speakers
+
+```javascript
+app.locals.allSpeakers = dataFile.speakers;
+```
+
+Now this variable is available to all of our routes throughout the app.
+
+## Build the menu
+
+
+
+Access variables in header.ejs
+
+```ejs
+<ul class="dropdown-menu">
+  <li><a href="/speakers">All Speakers</a></li>
+  <li role="separator" class="divider"></li>
+  <% allSpeakers.forEach(function(item) { %>
+    <li><a href="/speakers/<%= item.shortname %>"><%= item.name %></a></li>
+  <% }); %>
+</ul>
+```
+
+
+
+## Fix Speaker route
+
+for the speaker.js route
+
+```javascript
+router.get('/speakers', function(req, res) {
+  var data = req.app.get('appData');
+  var pagePhotos = [];
+  var pageSpeakers = data.speakers;
+
+  data.speakers.forEach(function(item) {
+    pagePhotos = pagePhotos.concat(item.artwork);
+  });
+
+  res.render('speakers', {
+    pageTitle: 'Speakers',
+    artwork: pagePhotos,
+    speakers: pageSpeakers, //<--- CHANGED THIS TO MAKE IT UNIQUE FOR THIS ROUTE
+    pageID: 'speakerList'
+  });
+});
+
+```
+
+for the speaker route
+
+```javascript
+router.get('/speakers/:speakerid', function(req, res) {
+  var data = req.app.get('appData');
+  var pagePhotos = [];
+  var pageSpeakers = [];
+
+  data.speakers.forEach(function(item) {
+    if (item.shortname == req.params.speakerid) {
+      pageSpeakers.push(item);
+      pagePhotos = pagePhotos.concat(item.artwork);
+    }
+  });
+
+  res.render('speakers', {
+    pageTitle: 'Speaker Info',
+    artwork: pagePhotos,
+    speakers: pageSpeakers,
+    pageID: 'speakerDetail'
+  });
+});
+```
+
+Here pageSpeakers starts as an empty array and we add an if statement to the forEach loop so we loop through all the speakers but only push speaker info the the array if the item.shortname matches the speaker id coming in with the request.
+
+We grab the speaker id from the request object using ```req.params.speakerid```
+
+
+
+## Edit Partials
+
+@ speakerslist.ejs
+
+We changed the pageID in the routes and we want to add partial for the speaker page 
+
+```ejs
+<% if (pageID == 'speakerList') { %>
+  <img class="speakerslist-img img-circle pull-left" src="/images/speakers/<%= item.shortname %>_tn.jpg" alt="Photo of <%= item.name %>"></a>
+<% } %>
+</a>
+
+<% if (pageID == 'speakerDetail') { %>
+<img class="speakerslist-img img-responsive pull-left" src="/images/speakers/<%= item.shortname %>.jpg" alt="Photo of <%= item.name %>"></a>
+<% } %>
+</a>
+```
+
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+Speaker page is working and Speaker list formatting tweaks are implemented.
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+# 
