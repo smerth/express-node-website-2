@@ -364,17 +364,6 @@ app.set('appData', dataFile);
 
 
 
-## Include newly created route handling files
-
-@ app.js
-
-```javascript
-app.use(require('./routes/index'));
-app.use(require('./routes/speakers'));
-```
-
-
-
 ## Require Express Router 
 
 @ the top of index.js and speaker.js
@@ -436,6 +425,12 @@ replace app.get() with router.get() for all three routes...
 
 ## Get data file into speakers.js
 
+You can set app variables using ```app.set()``` as was done for the data.json file in the express server ```app.set('appData', dataFile);```
+
+That variable can then be imported into other file like each of the routing files using ```
+
+
+
 speakers.js uses the datafile.  Use the var created in app.js to import the data into speakers.js routing functions
 
 ```javascript
@@ -477,6 +472,19 @@ module.exports = router;
 
 
 
+## Include newly created route handling files
+
+To have the app process and use files rather than require them for use later you can use the ```.use()``` method.
+
+@ app.js
+
+```javascript
+app.use(require('./routes/index'));
+app.use(require('./routes/speakers'));
+```
+
+
+
 ## app.js looks like this
 
 ```javascript
@@ -507,4 +515,12 @@ node app.js
 ```bash
 git add . && git commit -m
 ```
+
+
+
+# Chapter 02-03
+
+Creating a Public Folder
+
+
 
