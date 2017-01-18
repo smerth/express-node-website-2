@@ -4,12 +4,15 @@
   "description": "My build of the course 'Building a Website with Node & ExpressJS course on Lynda.com'",
   "main": "app.js",
   "scripts": {
+    "start": "nodemon -e css,ejs,js,json --watch routes",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "smerth",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "nodemon": "^1.11.0",
+    "reload": "^1.1.0"
   }
 }

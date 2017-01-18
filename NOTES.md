@@ -634,7 +634,101 @@ git add . && git commit -m
 
 # Chapter 02-04
 
-Automating Workflow
+Automating Workflow: Use Node.js package node monitor (nodemon) and scripts to watch for changes and reload the browser.
+
+Not using gulp since there isn't any comlicated processing nessecary.
+
+
+
+```bash
+npm install -save nodemon
+```
+
+to use simply start the app through ```nodemon```
+
+```bash
+nodemon app.js
+```
+
+## Modify start script 
+
+@ package.json
+
+```json
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+```
+
+
+
+ Specify the file extensions nodemon will restart for
+
+```json
+  "scripts": {
+    "start": "nodemon -e css,ejs,js,json app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+```
+
+
+
+
+
+specify the folder to watch
+
+```json
+  "scripts": {
+    "start": "nodemon -e css,ejs,js,json --watch app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+```
+
+
+
+ignore some files
+
+```json
+  "scripts": {
+    "start": "nodemon -e css,ejs,js,json --watch app --ignore feedback.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+```
+
+
+
+## Setup reload functionality
+
+```bash
+npm install --save reload
+```
+
+@ app.js
+
+```javascript
+var reload = require('reload');
+```
+
+call the reload method on the server
+
+@ app.js (bottom)
+
+```java
+reload(server, app);
+```
+
+
+
+Add reload script to each page
+
+@ index.js and @ speakers.js
+
+```html
+<script src="/reload/reload.js"></script>
+```
+
+
 
 
 
