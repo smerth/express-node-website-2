@@ -330,6 +330,86 @@ git add . && git commit -m
 
 
 
+# Chapter 04-04
+
+Handling Delete requests
+
+Add delete button on the feedback list with the id of the comment it is associated with
+
+```js
+output += '<div class="media-left"><button class="feedback-delete btn btn-xs btn-danger"><span id="' + key + '" class="glyphicon glyphicon-remove"></span></button></div>';
+```
+
+the key is the id.
+
+## Handle the click event for the delete button
+
+```javascript
+  $('.feedback-messages').on('click', function(e) {
+      if (e.target.className == 'glyphicon glyphicon-remove') {
+        $.ajax({
+          url: 'api/' + e.target.id,
+          type: 'DELETE',
+          success: updateFeedback
+        }); //ajax
+      } // the target is a delete button
+  }); //feedback messages
+```
+
+
+
+target the click event on the delete button specifically 
+
+```javascript
+if (e.target.className == 'glyphicon glyphicon-remove')
+```
+
+
+
+While we used a jQuery .post() method to post comments here we use $.ajax()  why is not explained (look up jQuery verbs)
+
+
+
+Recall the target id is set to the json key ```<span id="' + key + '" class="glyphicon glyphicon-remove">``` and so ```e.target.id``` is all we need to find the item in the json data.
+
+ ## API route for delete request
+
+@ routes/api.js
+
+```javascript
+router.delete('/api/:id', function(req, res) {
+  feedbackData.splice(req.params.id, 1);
+  fs.writeFile('app/data/feedback.json', JSON.stringify(feedbackData), 'utf8', function(err) {
+    if (err){
+      console.log(err);
+    }
+  });
+  res.json(feedbackData);
+});
+```
+
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+Messages can be deleted.
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+# Chapter 05-01
+
+Chat app
+
 
 
 
