@@ -408,9 +408,58 @@ git add . && git commit -m
 
 # Chapter 05-01
 
-Chat app
+Chat app using Socket.io
 
 
+
+## Add chat route
+
+@ app.js
+
+```javascript
+app.use(require('./routes/chat'));
+```
+
+
+
+## Create Route chat.js
+
+@ routes/chat.js
+
+The heart of which is chat form.
+
+```javascript
+<form name="chatForm" class="form-horizontal chat-form">
+  <div class="form-group">
+    <label for="chat-username" class="col-sm-2 control-label">Name</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="chat-username" required placeholder="Enter your name">
+    </div><!-- col-sm-10 -->
+  </div><!-- form-group -->
+  <div class="form-group">
+    <label for="chat-message" class="col-sm-2 control-label">Message</label>
+    <div class="col-sm-10">
+      <div class="input-group">
+        <input type="text" placeholder="Enter a message, then press enter" class="form-control" id="chat-message" rows="2" autocomplete="off"
+         required>
+        <span class="input-group-btn">
+          <button id="chat-submit" class="btn btn-info" type="submit">Chat</button>
+        </span>
+      </div><!-- input-group -->
+    </div><!-- col-sm-10 -->
+  </div><!-- form-group -->
+</form>
+```
+
+
+
+## Add chat link to menu
+
+@ header.ejs
+
+```ejs
+<li><a href="/chat">Chat</a></li>
+```
 
 
 
