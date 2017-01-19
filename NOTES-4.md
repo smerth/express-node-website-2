@@ -188,13 +188,149 @@ Conditionally load that script only on the feedback page using pageId liek we di
 npm start
 ```
 
-Api serves the son and the json data is brought into the feedback page template and populates the recent comments coloumn
+Api serves the son and the json data is brought into the feedback page template and populates the recent comments column.
 
 ## Commit changes
 
 ```bash
 git add . && git commit -m
 ```
+
+
+
+# Chapter 04-03
+
+handling post requests.
+
+Handle submit with jQuery.  Use body-parser middleware. Use fs to write files.
+
+
+
+# What doing?
+
+@ js/feedback.js
+
+```javascript
+  $('.feedback-form').submit(function(e) {
+    e.preventDefault();
+    $.post('api', {
+      name: $('#feedback-form-name').val(),
+      title: $('#feedback-form-title').val(),
+      message: $('#feedback-form-message').val()
+    }, updateFeedback);
+  });
+```
+
+
+
+Get the form with jQuery. On submit, fire an anonymous callback function and pass in the event object.  Prevent the default action of on-submit. Call the jQuery .post() method and pass in the API and map the values of each form field to the correct API json node.  Lastly, call updateFeedback to show the latest data on the page.
+
+
+
+## Install dependancies
+
+```bash
+npm install --save body-parser
+```
+
+Add body-parser to the api route definition
+
+@ routes/api.js
+
+```javascript
+var bodyParser = require('body-parser');
+```
+
+
+
+## Write the response to a post request
+
+```javascript
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false })); 
+
+router.post('/api', function(req, res) {
+  feedbackData.unshift(req.body);
+  res.json(feedbackData);
+});
+```
+
+feedbackData is variable holding our json data. Unshift pushes the new post data to the top of the json object (since we want to read the most recent first.) The response we send is this new updated data object.
+
+
+
+## Bug fix
+
+Edit the feedback output to display the name of the commenter
+
+@ js/feedback.js
+
+```javascript
+ $.each(data,function(key, item) {
+   output += '     <div class="feedback-item item-list media-list">';
+   output += '       <div class="feedback-item media">';
+   output += '         <div class="feedback-info media-body">';
+   output += '           <div class="feedback-head">';
+   output += '             <div class="feedback-title">' + item.title + ' <small class="feedback-name label label-info">' + item.name + '</small></div>';
+   output += '           </div>';
+   output += '           <div class="feedback-message">' + item.message + '</div>';
+   output += '         </div>';
+   output += '       </div>';
+   output += '     </div>';
+ });
+```
+
+
+
+
+
+## Implement fs module
+
+feedbackData is an object in the node servermemory.  When you restart the server it will disappear (Or, a refresh of the server, like when you write new code).  For it to persist we need to write it to the json file.  For that we use fs (file system) module.
+
+Its a standard npm module so no need to install jsut require.
+
+@ routes/api.js
+
+```javascript
+var fs = require('fs');
+```
+
+save 
+
+```javascript
+fs.writeFile('app/data/feedback.json', JSON.stringify(feedbackData), 'utf8', function(err) {
+  console.log(err);
+});
+```
+
+
+
+## Edit start script
+
+```json
+"start": "nodemon -e css,ejs,js,json --watch app --ignore feedback.json"
+```
+
+ignore feedback.json so the server doesn't reboot every time someone adds a comment.
+
+## Check app functions
+
+```bash
+npm start
+```
+
+Check the feedback.json file and see that new comments are being written to the file.
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+
 
 
 
