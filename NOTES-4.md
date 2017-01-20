@@ -463,3 +463,287 @@ The heart of which is chat form.
 
 
 
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+Chat link leads to chat form
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+# Chapter 05-02
+
+Adding chat with javascript
+
+## Javascript to monitor the form
+
+
+
+@ public/js/chat.js
+
+
+
+```javascript
+var chatForm = document.forms.chatForm;
+
+if (chatForm) {
+  var chatUsername = document.querySelector('#chat-username');
+  var chatMessage = document.querySelector('#chat-message');
+
+  chatForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    showMessage({
+      username: chatUsername.value,
+      message: chatMessage.value,
+    });
+    chatMessage.value='';
+    chatMessage.focus();
+  });
+}
+
+function showMessage(data) {
+  var chatDisplay = document.querySelector('.chat-display');
+  var newMessage = document.createElement('p');
+  newMessage.className = 'bg-success chat-text';
+  newMessage.innerHTML = '<strong>' + data.username + '</strong>: ' + data.message;
+  chatDisplay.insertBefore(newMessage, chatDisplay.firstChild);
+}
+```
+
+
+
+## Add javascript to page
+
+@views/partials/template/jsdefaults.ejs
+
+```ejs
+<% if(pageID == 'chat') { %>
+  <script src="/js/chat.js"></script>
+<% } %>
+```
+
+
+
+
+
+
+
+## Check app functions
+
+```bash
+npm start
+```
+
+Messages are displayed in the display area.
+
+## Commit changes
+
+```bash
+git add . && git commit -m
+```
+
+
+
+# Chapter 05-03
+
+
+
+Working with socket.io
+
+There are 2 parts to socket.io - the server and the client.  So we always need to build the connection to our express server and also write the javascript that connects socket.io to our client.
+
+Install socket.io
+
+call the middleware in the express server. 
+
+Write and add a client side script and add it to your pages.
+
+The app will the be able to track events and connections.
+
+## Install
+
+```bash 
+npm install --save socket.io
+```
+
+
+
+## Require Socket.io
+
+```javascript
+var io = require('socket.io')();
+```
+
+The extra parathenesis are where you would pass extra setting to socket.io but in this case the defaults are fine.
+
+## Connect Socket.io to server
+
+```javascript
+io.attach(server);
+io.on('connection', function(socket) {
+  socket.on('postMessage', function(data) {
+    io.emit('updateMessages', data);
+  });
+});
+```
+
+.on() is the socket event detection method,… in this case detect a new browser connection and upon detection run a callback function and pass in the connection object ```socket``` .
+
+within that io.on() function which defines a connection we can watch for an event on this particular socket.  We watch for the postMessage event which takes in the data from the message form post event. 
+
+Lastly we run io.emit() and run updateMesssages passing in the data from the message form which was submitted.
+
+
+
+## Link socket.io to client pages
+
+Get client CDN link from socket.io website and add to the client. 
+
+@ jsdefaults.ejs
+
+```ejs
+<% if(pageID == 'chat') { %>
+  <script src="/js/chat.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<% } %>
+```
+
+
+
+
+
+## Client Side Javascript
+
+@ public/js/chat.js
+
+Load all the methods from socket.io into a variable we can work with
+
+```javascript
+var socket = io();
+```
+
+
+
+Move form input variables out to the top of page, just reads a little cleaner
+
+```javascript
+var socket = io();
+var chatForm = document.forms.chatForm;
+var chatUsername = document.querySelector('#chat-username');
+var chatMessage = document.querySelector('#chat-message');
+```
+
+Detect a socket connection
+
+```javascript
+socket.on('connect', function() {
+
+}); //socket
+```
+
+ And paste into that connection the code to handle the chat form and update messages, and move the chatForm variable into that connection.
+
+```javascript
+socket.on('connect', function() {
+  var chatForm = document.forms.chatForm;
+
+  if (chatForm) {
+    chatForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      socket.emit('postMessage',{
+        username: chatUsername.value,
+        message: chatMessage.value,
+      });
+      chatMessage.value='';
+      chatMessage.focus();
+    }); //chatform event
+
+  } //chatform
+}); //socket
+```
+
+Add an event listener to respond to ```on('updateMessages')``` event
+
+```javascript
+    socket.on('updateMessages', function(data) {
+      showMessage(data);
+    }); //updateMessages
+```
+
+
+
+
+
+
+
+Finished @ public/js/chat.js
+
+```javascript
+var socket = io();
+var chatUsername = document.querySelector('#chat-username');
+var chatMessage = document.querySelector('#chat-message');
+
+socket.on('connect', function() {
+  var chatForm = document.forms.chatForm;
+
+  if (chatForm) {
+    chatForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      socket.emit('postMessage',{
+        username: chatUsername.value,
+        message: chatMessage.value,
+      });
+      chatMessage.value='';
+      chatMessage.focus();
+    }); //chatform event
+
+    socket.on('updateMessages', function(data) {
+      showMessage(data);
+    }); //updateMessages
+  } //chatform
+}); //socket
+
+function showMessage(data) {
+  var chatDisplay = document.querySelector('.chat-display');
+  var newMessage = document.createElement('p');
+
+  if (chatUsername.value == data.username) {
+    newMessage.className = 'bg-success chat-text';
+  } else {
+    newMessage.className = 'bg-info text-warning chat-text';
+  }
+
+  newMessage.innerHTML = '<strong>' + data.username + '</strong>: ' + data.message;
+  chatDisplay.insertBefore(newMessage, chatDisplay.firstChild);
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
