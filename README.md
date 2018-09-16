@@ -11,5 +11,7 @@ While it looks like an simple HTML site it is actually an Express.js and Node.js
 - A purpose build API supports commenting on the Feedback page of the site. GET, POST and DELETE are implement in the API. Comments are pushed to the API JSON file.
 - A chat page is backed by an a Socket.io server to provide live chatting on the page.
 
-![App Screenshot](screenshot.jpg)
+![App Screenshot](https://raw.githubusercontent.com/smerth/express-node-website-2/master/screenshot.jpg)
+
+
 
